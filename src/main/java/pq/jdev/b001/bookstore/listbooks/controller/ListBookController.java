@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pq.jdev.b001.bookstore.books.model.Book;
-import pq.jdev.b001.bookstore.books.service.UploadPathService;
 import pq.jdev.b001.bookstore.category.model.Category;
 import pq.jdev.b001.bookstore.category.service.CategoryService;
 import pq.jdev.b001.bookstore.listbooks.service.ListBookService;
@@ -49,9 +48,6 @@ public class ListBookController {
 
 	@Autowired
 	private CategoryService categoryservice;
-
-	@Autowired
-	private UploadPathService uploadPathService;
 
 	@GetMapping("/book")
 	public String index(Authentication authentication, ModelMap map, Model model, HttpServletRequest request,
@@ -325,7 +321,6 @@ public class ListBookController {
 		}
 		if ((authentication != null) && ((userService.findByUsername(authentication.getName())
 				.getId() == listBookService.findOne(id).getPerson().getId()) || (isAdmin(roles)))) {
-			uploadPathService.deleteAllUploadByIdBook(id);
 			listBookService.delete(id);
 			redirect.addFlashAttribute("success", "Deleted book successfully!");
 		}

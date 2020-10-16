@@ -23,7 +23,7 @@ public class UploadInformationDTO {
 	private String domain;
 
 	@Nullable
-	private MultipartFile pictureFile;
+	private byte[] picture;
 
 	private Date uploadedDate;
 
@@ -42,14 +42,11 @@ public class UploadInformationDTO {
 	@Nullable
 	private List<Category> categories;
 
-	@NotEmpty
-	private List<MultipartFile> files;
-
-	private MultipartFile folder;
-
 	private List<SelectCategory> selectCategories;
 
 	private String description;
+
+	private String bookNameURL;
 
 	public String getTitle() {
 		return title;
@@ -75,12 +72,12 @@ public class UploadInformationDTO {
 		this.domain = domain;
 	}
 
-	public MultipartFile getPictureFile() {
-		return pictureFile;
+	public byte[] getPicture() {
+		return picture;
 	}
 
-	public void setPictureFile(MultipartFile pictureFile) {
-		this.pictureFile = pictureFile;
+	public void setPicture(byte[] picture) {
+		this.picture = picture;
 	}
 
 	public Date getUploadedDate() {
@@ -137,22 +134,6 @@ public class UploadInformationDTO {
 
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
-	}
-
-	public List<MultipartFile> getFiles() {
-		return files;
-	}
-
-	public void setFiles(List<MultipartFile> files) {
-		this.files = files;
-	}
-
-	public MultipartFile getFolder() {
-		return folder;
-	}
-
-	public void setFolder(MultipartFile folder) {
-		this.folder = folder;
 	}
 
 	public List<SelectCategory> getSelectCategories() {

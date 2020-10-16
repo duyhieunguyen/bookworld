@@ -15,8 +15,6 @@ import pq.jdev.b001.bookstore.users.model.Person;
 
 public interface BookService {
 
-	public boolean checkInput(UploadInformationDTO dto);
-
 	public UploadInformationDTO save(UploadInformationDTO dto, Person person, List<String> categoriesId)
 			throws Exception;
 

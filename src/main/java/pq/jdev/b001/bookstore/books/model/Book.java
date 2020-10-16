@@ -3,6 +3,7 @@ package pq.jdev.b001.bookstore.books.model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.Set;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -51,9 +53,6 @@ public class Book implements Serializable {
 	@Column(name = "DOMAIN", columnDefinition = "VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin")
 	private String domain;
 
-	@Column(name = "PICTURE", columnDefinition = "VARCHAR(255)")
-	private String picture;
-
 	@Column(name = "UPLOADED_DATE")
 	private Date uploadedDate;
 
@@ -72,16 +71,24 @@ public class Book implements Serializable {
 	@JoinTable(name = "book_category", joinColumns = { @JoinColumn(name = "BOOK_ID") }, inverseJoinColumns = {
 			@JoinColumn(name = "CATEGORY_ID") })
 	private Set<Category> categories;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "UPLOAD_ID")
-	private Upload uploads;
 	
 	@Column(name = "PUBLISHED_YEAR")
 	private Integer publishedYear;
 
 	@Column(name = "DESCRIPTION")
 	private String description;
+
+	@Column(name = "PICTURE", nullable = false, length = Integer.MAX_VALUE)
+	private byte[] picture;
+
+	@Column(name = "BOOK_NAME_URL", nullable = false)
+	private String bookNameURL;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
+	private Set<Image> images = new HashSet<>();
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
+	private Set<Comment> comments = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -115,13 +122,22 @@ public class Book implements Serializable {
 		this.domain = domain;
 	}
 
-	public String getPicture() {
+	public byte[] getPicture() {
 		return picture;
 	}
 
-	public void setPicture(String picture) {
+	public void setPicture(byte[] picture) {
 		this.picture = picture;
 	}
+
+	public String getBookNameURL() {
+		return bookNameURL;
+	}
+
+	public void setBookNameURL(String bookNameURL) {
+		this.bookNameURL = bookNameURL;
+	}
+
 
 	public Date getUploadedDate() {
 		return uploadedDate;
@@ -163,14 +179,6 @@ public class Book implements Serializable {
 		this.categories = categories;
 	}
 
-	public Upload getUploads() {
-		return uploads;
-	}
-
-	public void setUploads(Upload uploads) {
-		this.uploads = uploads;
-	}
-
 	public Integer getPublishedYear() {
 		return publishedYear;
 	}
@@ -194,5 +202,22 @@ public class Book implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Set<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<Image> images) {
+		this.images = images;
+	}
+
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
+	}
+	
 	
 }
