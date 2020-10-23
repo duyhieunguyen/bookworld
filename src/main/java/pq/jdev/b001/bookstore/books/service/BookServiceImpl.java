@@ -1,12 +1,17 @@
 package pq.jdev.b001.bookstore.books.service;
 
-
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 import javax.servlet.ServletContext;
 
@@ -47,6 +52,9 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private ServletContext context;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	
 
 	/**
@@ -63,7 +71,7 @@ public class BookServiceImpl implements BookService {
 		
 			/** Handling book first */
 			/** Set book.title */
-			book.setTitle(dto.getTitle());
+			book.setTitle(dto.getBookTitle());
 			/** Set book.price */
 			book.setPrice(dto.getPrice());
 			/** Set book.domain */
@@ -131,7 +139,7 @@ public class BookServiceImpl implements BookService {
 			Long bookid = editBook.getId();
 			
 			/** Update book.title */
-			bookRepository.saveUpdateTitle(bookid, dto.getTitle());
+			bookRepository.saveUpdateTitle(bookid, dto.getBookTitle());
 			/** Update book.price */
 			bookRepository.saveUpdatePrice(bookid, dto.getPrice());
 			/** Update book.domain */
@@ -248,5 +256,116 @@ public class BookServiceImpl implements BookService {
 			bookRepository.save(book);
 			categorySet = new HashSet<Category>();
 		}
+	}
+
+	private void getPathBookInfo(CriteriaQuery<Object[]> query, Root<Book> rootBook) {
+		Path<Long> bookId = rootBook.get("bookId");
+		Path<String> bookTitle = rootBook.get("bookTitle");
+		Path<Long> bookPrice = rootBook.get("bookPrice");
+		Path<byte[]> picture = rootBook.get("picture");
+		Path<String> bookTitleURL = rootBook.get("bookTitleURL");
+		query.multiselect(bookId, bookTitle, bookPrice, picture, bookTitleURL);
+	}
+
+	private void querySortPrice(CriteriaBuilder builder, CriteriaQuery<Object[]> query, String sort,
+			Path<Long> bookPrice) {
+		Long lowestPrice = (long) 0;
+		Long highestPrice = (long) 0;
+		if (sort.equals("u3")) {
+			lowestPrice = (long) 3000000;
+			query.where(builder.lessThan(bookPrice, lowestPrice));
+		} else if (sort.equals("f3t5")) {
+			lowestPrice = (long) 3000000;
+			highestPrice = (long) 5000000;
+			query.where(builder.or(builder.ge(bookPrice, lowestPrice)), builder.le(bookPrice, highestPrice));
+		} else if (sort.equals("f5t10")) {
+			lowestPrice = (long) 5000000;
+			highestPrice = (long) 10000000;
+			query.where(builder.or(builder.ge(bookPrice, lowestPrice)), builder.le(bookPrice, highestPrice));
+		} else if (sort.equals("f10t15")) {
+			lowestPrice = (long) 10000000;
+			highestPrice = (long) 15000000;
+			query.where(builder.or(builder.ge(bookPrice, lowestPrice)), builder.le(bookPrice, highestPrice));
+		} else {
+			highestPrice = (long) 15000000;
+			query.where(builder.greaterThan(bookPrice, highestPrice));
+		}
+	}
+
+	private String trimString(String keyword) {
+		String newString = keyword;
+		if (keyword.contains("-")) {
+			newString = keyword.replace("-", " ");
+		}
+		return newString;
+	}
+
+	private List<UploadInformationDTO> converObjectToProductInfo(List<Object[]> objects) {
+		List<UploadInformationDTO> books = new ArrayList<>();
+		UploadInformationDTO book = null;
+		for (Object[] values : objects) {
+			Long bookId = (Long) values[0];
+			String bookTitle = (String) values[1];
+			Long bookPrice = (Long) values[2];
+			byte[] avatar = (byte[]) values[3];
+			String bookTitleURL = (String) values[4];
+			book = new UploadInformationDTO(bookId, bookTitle, bookPrice, avatar, bookTitleURL);
+			books.add(book);
+		}
+		return books;
+	}
+
+	@Override
+	public List<UploadInformationDTO> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Book getBookById(Long bookId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Book getBookByTitle(String BookTitle) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UploadInformationDTO getBookInfoById(Long bookId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UploadInformationDTO getBookInfoByTitle(String bookTitle) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UploadInformationDTO> searchAutocomplete(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UploadInformationDTO> searchBookInfo(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UploadInformationDTO> searchBookBySortBrand(String brand) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UploadInformationDTO> searchBookBySortPrice(String sort) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

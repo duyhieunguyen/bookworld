@@ -2,19 +2,26 @@ package pq.jdev.b001.bookstore.books.web.dto;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Base64;
+import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.lang.Nullable;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import pq.jdev.b001.bookstore.books.model.SelectCategory;
+import pq.jdev.b001.bookstore.books.model.Image;
+import pq.jdev.b001.bookstore.books.model.Comment;
 import pq.jdev.b001.bookstore.category.model.Category;
 import pq.jdev.b001.bookstore.publishers.model.Publishers;
 
 public class UploadInformationDTO {
 	@NotEmpty
-	private String title;
+	private Long bookId;
+
+	@NotEmpty
+	private String bookTitle;
 
 	@NotEmpty
 	private Long price;
@@ -46,14 +53,54 @@ public class UploadInformationDTO {
 
 	private String description;
 
-	private String bookNameURL;
+	private String bookTitleURL;
 
-	public String getTitle() {
-		return title;
+	private CommonsMultipartFile file;
+
+	private Set<Image> images;
+	
+	private Set<Comment> comments;
+
+	public UploadInformationDTO() {
+
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public UploadInformationDTO(String bookTitle, byte[] picture, String bookTitleURL) {
+		this.bookTitle = bookTitle;
+		this.picture = picture;
+		this.bookTitleURL = bookTitleURL;
+	}
+
+	public UploadInformationDTO(Long bookId, String bookTitle, Long price, byte[] picture) {
+		this.bookId = bookId;
+		this.bookTitle = bookTitle;
+		this.price = price;
+		this.picture = picture;
+	}
+
+	public UploadInformationDTO(Long bookId, String bookTitle, Long price, byte[] picture, String bookTitleURL) {
+		this.bookId = bookId;
+		this.bookTitle = bookTitle;
+		this.price = price;
+		this.picture = picture;
+		this.bookTitleURL = bookTitleURL;
+	}
+
+	public UploadInformationDTO(Long bookId, String bookTitle, Long price,  byte[] picture, Set<Image> images) {
+		this.bookId = bookId;
+		this.bookTitle = bookTitle;
+		this.price = price;
+		
+		this.picture = picture;
+		this.images = images;
+	}
+
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
 	public Long getPrice() {
@@ -152,4 +199,35 @@ public class UploadInformationDTO {
 		this.description = description;
 	}
 
+	public String getBase64() {
+		return Base64.getEncoder().encodeToString(picture);
+	}
+
+	public String getbookTitleURL() {
+		return bookTitleURL;
+	}
+
+	public CommonsMultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(CommonsMultipartFile file) {
+		this.file = file;
+	}
+
+	public Set<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<Image> images) {
+		this.images = images;
+	}
+
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
+	}
 }

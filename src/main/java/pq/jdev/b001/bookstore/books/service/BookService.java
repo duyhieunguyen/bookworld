@@ -15,28 +15,47 @@ import pq.jdev.b001.bookstore.users.model.Person;
 
 public interface BookService {
 
-	public UploadInformationDTO save(UploadInformationDTO dto, Person person, List<String> categoriesId)
+
+	Book findBookByID(Long id);
+
+	UploadInformationDTO save(UploadInformationDTO dto, Person person, List<String> categoriesId)
 			throws Exception;
 
-	public UploadInformationDTO update(UploadInformationDTO dto, Person person, List<String> categoriesId,
+	UploadInformationDTO update(UploadInformationDTO dto, Person person, List<String> categoriesId,
 			Book editBook) throws Exception;
 
 	public boolean checkRightInteraction(User user, Book book) throws Exception;
 
-	public List<BookDTO> viewAllBooks();
+	List<BookDTO> viewAllBooks();
 
-	public Book findBookByID(Long id);
+	List<Publishers> showAllPublishers();
 
-	public List<Publishers> showAllPublishers();
+	List<Category> showAllCategories();
 
-	public List<Category> showAllCategories();
-
-	public List<SelectCategory> showAllCategoriesWithFlag(Book editBook);
+	List<SelectCategory> showAllCategoriesWithFlag(Book editBook);
 
 	public void changePublisher(Long idFrom, Long idTo);
 
 	public void changeCategory(long idTo, long idFrom);
 	
-	public List<Book> findBookByCategories(Collection<Category> categories);
+	List<Book> findBookByCategories(Collection<Category> categories);
+
+	List<UploadInformationDTO> findAll();
+	
+	Book getBookById(Long bookId);
+	
+	Book getBookByTitle(String BookTitle);
+	
+	UploadInformationDTO getBookInfoById(Long bookId);
+	
+	UploadInformationDTO getBookInfoByTitle(String bookTitle);
+	
+	List<UploadInformationDTO> searchAutocomplete(String keyword);
+	
+	List<UploadInformationDTO> searchBookInfo(String keyword);
+	
+	List<UploadInformationDTO> searchBookBySortBrand(String brand);
+	
+	List<UploadInformationDTO> searchBookBySortPrice(String sort);
 
 }
