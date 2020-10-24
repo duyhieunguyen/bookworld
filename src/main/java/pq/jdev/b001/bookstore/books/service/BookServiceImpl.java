@@ -48,32 +48,28 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private BookRepository bookRepository;
 
-
 	@Autowired
 	private ServletContext context;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	
-
 	/**
 	 * Method checkInput is used to check if user didn't miss any important
 	 * information
 	 */
-
 
 	/** Method save is used to insert a new book to database */
 	public UploadInformationDTO save(UploadInformationDTO dto, Person person, List<String> categoriesId)
 			throws Exception {
 		try {
 			Book book = new Book();
-		
+
 			/** Handling book first */
 			/** Set book.title */
-			book.setTitle(dto.getBookTitle());
+			book.setBookTitle(dto.getBookTitle());
 			/** Set book.price */
-			book.setPrice(dto.getPrice());
+			book.setBookPrice(dto.getBookPrice());
 			/** Set book.domain */
 			book.setDomain(dto.getDomain());
 			/** Set book.uploadedDate */
@@ -93,7 +89,7 @@ public class BookServiceImpl implements BookService {
 			book.setDescription(dto.getDescription());
 			/** Save book to get book.id */
 			Book dbBook = bookRepository.save(book);
-			
+
 			/** Set book.categories */
 			Set<Category> categories = new HashSet<Category>();
 			Category t = new Category();
@@ -104,8 +100,7 @@ public class BookServiceImpl implements BookService {
 				t = new Category();
 			}
 			dbBook.setCategories(categories);
-		
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -119,7 +114,7 @@ public class BookServiceImpl implements BookService {
 			return true;
 		} else if (currentUser.getPower() == 1) {
 			try {
-				Book bookFound = bookRepository.findByPersonIdandBookId(currentUser.getId(), book.getId());
+				Book bookFound = bookRepository.findByPersonIdandBookId(currentUser.getId(), book.getBookId());
 				if (bookFound == null) {
 					return false;
 				} else {
@@ -136,12 +131,12 @@ public class BookServiceImpl implements BookService {
 	public UploadInformationDTO update(UploadInformationDTO dto, Person person, List<String> categoriesId,
 			Book editBook) throws Exception {
 		try {
-			Long bookid = editBook.getId();
-			
+			Long bookid = editBook.getBookId();
+
 			/** Update book.title */
 			bookRepository.saveUpdateTitle(bookid, dto.getBookTitle());
 			/** Update book.price */
-			bookRepository.saveUpdatePrice(bookid, dto.getPrice());
+			bookRepository.saveUpdatePrice(bookid, dto.getBookPrice());
 			/** Update book.domain */
 			bookRepository.saveUpdateDomain(bookid, dto.getDomain());
 			/** Update book.uploadedDate */
@@ -160,7 +155,7 @@ public class BookServiceImpl implements BookService {
 			bookRepository.saveUpdatePublishedYear(bookid, dto.getPublishedYear());
 			/** Update book.description */
 			bookRepository.saveUpdateDescription(bookid, dto.getDescription());
-		
+
 			/** Set book.categories */
 			Set<Category> categories = new HashSet<Category>();
 			Category t = new Category();
@@ -214,7 +209,7 @@ public class BookServiceImpl implements BookService {
 		SelectCategory temp = new SelectCategory();
 		for (int i = 0; i < categories.size(); i++) {
 			temp.setCategory(categories.get(i));
-			for (Category o : categoryRepository.findCategoryByIdBook(editBook.getId())) {
+			for (Category o : categoryRepository.findCategoryByIdBook(editBook.getBookId())) {
 				if (o.getId() == categories.get(i).getId()) {
 					temp.setFlag(1);
 				}
@@ -243,16 +238,16 @@ public class BookServiceImpl implements BookService {
 		categoryCollection.add(categoryRepository.findById(idFrom));
 		List<Book> lb = findBookByCategories(categoryCollection);
 		for (Book b : lb) {
-			List<Category> lc = categoryRepository.findCategoryByIdBook(b.getId());
-			for (Category c : lc){
+			List<Category> lc = categoryRepository.findCategoryByIdBook(b.getBookId());
+			for (Category c : lc) {
 				if (c.getId() != idFrom)
 					categorySet.add(c);
 			}
-			if (categorySet==null)
+			if (categorySet == null)
 				categorySet.add(cateTo);
-			Book book = bookRepository.findByid(b.getId());
+			Book book = bookRepository.findByid(b.getBookId());
 			book.setCategories(categorySet);
-			System.out.println(book.getId());
+			System.out.println(book.getBookId());
 			bookRepository.save(book);
 			categorySet = new HashSet<Category>();
 		}
@@ -317,55 +312,108 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<UploadInformationDTO> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+		Root<Book> rootBook = query.from(Book.class);
+		getPathBookInfo(query, rootBook);
+		query.orderBy(builder.asc(rootBook.get("bookTitle")));
+		List<Object[]> objects = this.entityManager.createQuery(query).getResultList();
+		List<UploadInformationDTO> books = converObjectToProductInfo(objects);
+		return books;
 	}
 
 	@Override
 	public Book getBookById(Long bookId) {
-		// TODO Auto-generated method stub
-		return null;
+		Book book = this.entityManager.find(Book.class, bookId);
+		return book;
 	}
 
 	@Override
-	public Book getBookByTitle(String BookTitle) {
-		// TODO Auto-generated method stub
-		return null;
+	public Book getBookByTitle(String bookTitle) {
+		bookTitle = trimString(bookTitle);
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Book> query = builder.createQuery(Book.class);
+		Root<Book> rootBook = query.from(Book.class);
+		query.select(rootBook).where(builder.like(rootBook.get("bookTitle"), bookTitle));
+		rootBook.fetch("images");
+		List<Book> books = this.entityManager.createQuery(query).getResultList();
+		if (books.isEmpty()) {
+			return null;
+		}
+		Book book = books.get(0);
+		return book;
 	}
 
 	@Override
 	public UploadInformationDTO getBookInfoById(Long bookId) {
-		// TODO Auto-generated method stub
-		return null;
+		Book book = getBookById(bookId);
+		if (book == null) {
+			return null;
+		}
+		return new UploadInformationDTO(book.getBookId(), book.getBookTitle(), book.getBookPrice(), book.getPicture());
 	}
 
 	@Override
 	public UploadInformationDTO getBookInfoByTitle(String bookTitle) {
-		// TODO Auto-generated method stub
-		return null;
+		Book book = getBookByTitle(bookTitle);
+		if (book == null) {
+			return null;
+		}
+		return new UploadInformationDTO(book.getBookId(), book.getBookTitle(), book.getBookPrice(), book.getDomain(),
+										book.getPicture(), book.getUploadedDate(), book.getAuthors(), book.getPublishedYear(),
+										book.getDescription(), book.getImages());
 	}
 
 	@Override
 	public List<UploadInformationDTO> searchAutocomplete(String keyword) {
-		// TODO Auto-generated method stub
-		return null;
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<UploadInformationDTO> query = builder.createQuery(UploadInformationDTO.class);
+		Root<Book> rootBook = query.from(Book.class);
+		Path<String> bookTitle = rootBook.get("bookTitle");
+		Path<byte[]> picture = rootBook.get("picture");
+		Path<String> bookTitleURL = rootBook.get("bookTitleURL");
+		query.multiselect(bookTitle, picture, bookTitleURL);
+		query.where(builder.like(bookTitle, "%" + keyword + "%"));
+		List<UploadInformationDTO> books = this.entityManager.createQuery(query).setMaxResults(5).getResultList();
+		return books;
 	}
 
 	@Override
 	public List<UploadInformationDTO> searchBookInfo(String keyword) {
-		// TODO Auto-generated method stub
-		return null;
+		keyword = trimString(keyword);
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+		Root<Book> rootBook = query.from(Book.class);
+		getPathBookInfo(query, rootBook);
+		query.where(builder.like(rootBook.get("bookTitle"), "%" + keyword + "%"));
+		List<Object[]> objects = this.entityManager.createQuery(query).getResultList();
+		List<UploadInformationDTO> books = converObjectToProductInfo(objects);
+		return books;
 	}
 
 	@Override
-	public List<UploadInformationDTO> searchBookBySortBrand(String brand) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UploadInformationDTO> searchBookBySortAuthor(String sortAuthor) {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+		Root<Book> rootBook = query.from(Book.class);
+		getPathBookInfo(query, rootBook);
+		Path<String> author = rootBook.get("authors");
+		query.where(builder.like(author, sortAuthor));
+		List<Object[]> objects = this.entityManager.createQuery(query).getResultList();
+		List<UploadInformationDTO> books = converObjectToProductInfo(objects);
+		return books;
 	}
 
 	@Override
 	public List<UploadInformationDTO> searchBookBySortPrice(String sort) {
-		// TODO Auto-generated method stub
-		return null;
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+		Root<Book> rootBook = query.from(Book.class);
+		getPathBookInfo(query, rootBook);
+		query.orderBy(builder.asc(rootBook.get("bookPrice")));
+		querySortPrice(builder, query, sort, rootBook.get("bookPrice"));
+		List<Object[]> objects = this.entityManager.createQuery(query).getResultList();
+		List<UploadInformationDTO> books = converObjectToProductInfo(objects);
+		return books;
 	}
 }

@@ -24,7 +24,7 @@ public class UploadInformationDTO {
 	private String bookTitle;
 
 	@NotEmpty
-	private Long price;
+	private Long bookPrice;
 
 	@Nullable
 	private String domain;
@@ -71,27 +71,32 @@ public class UploadInformationDTO {
 		this.bookTitleURL = bookTitleURL;
 	}
 
-	public UploadInformationDTO(Long bookId, String bookTitle, Long price, byte[] picture) {
+	public UploadInformationDTO(Long bookId, String bookTitle, Long bookPrice, byte[] picture) {
 		this.bookId = bookId;
 		this.bookTitle = bookTitle;
-		this.price = price;
+		this.bookPrice = bookPrice;
 		this.picture = picture;
 	}
 
-	public UploadInformationDTO(Long bookId, String bookTitle, Long price, byte[] picture, String bookTitleURL) {
+	public UploadInformationDTO(Long bookId, String bookTitle, Long bookPrice, byte[] picture, String bookTitleURL) {
 		this.bookId = bookId;
 		this.bookTitle = bookTitle;
-		this.price = price;
+		this.bookPrice = bookPrice;
 		this.picture = picture;
 		this.bookTitleURL = bookTitleURL;
 	}
 
-	public UploadInformationDTO(Long bookId, String bookTitle, Long price,  byte[] picture, Set<Image> images) {
+	public UploadInformationDTO(Long bookId, String bookTitle, Long bookPrice, String domain, byte[] picture, Date uploadedDate
+								, String authors, Integer publishedYear, String description, Set<Image> images) {
 		this.bookId = bookId;
 		this.bookTitle = bookTitle;
-		this.price = price;
-		
+		this.bookPrice = bookPrice;
+		this.domain = domain;
 		this.picture = picture;
+		this.uploadedDate = uploadedDate;
+		this.authors = authors;
+		this.publishedYear = publishedYear;
+		this.description = description;
 		this.images = images;
 	}
 
@@ -103,12 +108,12 @@ public class UploadInformationDTO {
 		this.bookTitle = bookTitle;
 	}
 
-	public Long getPrice() {
-		return price;
+	public Long getBookPrice() {
+		return bookPrice;
 	}
 
-	public void setPrice(Long price) {
-		this.price = price;
+	public void setBookPrice(Long bookPrice) {
+		this.bookPrice = bookPrice;
 	}
 
 	public String getDomain() {

@@ -36,16 +36,16 @@ public class Book implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
-	private Long id;
+	@Column(name = "BOOK_ID")
+	private Long bookId;
 	
 	@NotEmpty
-	@Column(name = "TITLE", columnDefinition = "VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin")
-	private String title;
+	@Column(name = "BOOK_TITLE", columnDefinition = "VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin")
+	private String bookTitle;
 	
 	@NotNull
-	@Column(name = "PRICE")
-	private Long price;
+	@Column(name = "BOOK_PRICE")
+	private Long bookPrice;
 
 	@Column(name = "OK")
 	private int ok;
@@ -81,8 +81,8 @@ public class Book implements Serializable {
 	@Column(name = "PICTURE", nullable = false, length = Integer.MAX_VALUE)
 	private byte[] picture;
 
-	@Column(name = "BOOK_NAME_URL", nullable = false)
-	private String bookNameURL;
+	@Column(name = "BOOK_TITLE_URL", nullable = false)
+	private String bookTitleURL;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
 	private Set<Image> images = new HashSet<>();
@@ -90,28 +90,28 @@ public class Book implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
 	private Set<Comment> comments = new HashSet<>();
 
-	public Long getId() {
-		return id;
+	public Long getBookId() {
+		return bookId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setBookId(Long bookId) {
+		this.bookId = bookId;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getBookTitle() {
+		return bookTitle;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
-	public long getPrice() {
-		return price;
+	public long getBookPrice() {
+		return bookPrice;
 	}
 
-	public void setPrice(Long price) {
-		this.price = price;
+	public void setBookPrice(Long bookPrice) {
+		this.bookPrice = bookPrice;
 	}
 
 	public String getDomain() {
@@ -130,12 +130,12 @@ public class Book implements Serializable {
 		this.picture = picture;
 	}
 
-	public String getBookNameURL() {
-		return bookNameURL;
+	public String getBookTitleURL() {
+		return bookTitleURL;
 	}
 
-	public void setBookNameURL(String bookNameURL) {
-		this.bookNameURL = bookNameURL;
+	public void setBookTitleURL(String bookTitleURL) {
+		this.bookTitleURL = bookTitleURL;
 	}
 
 

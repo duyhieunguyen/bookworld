@@ -375,13 +375,13 @@ public class ListBookController {
 		List<Book> list = new ArrayList<Book>();
 
 		for (Book a : listBookGet) {
-			if (is(String.valueOf(a.getId()), s) || is(a.getTitle(), s) || is(a.getDomain(), s) || is(a.getAuthors(), s)
+			if (is(String.valueOf(a.getBookId()), s) || is(a.getBookTitle(), s) || is(a.getDomain(), s) || is(a.getAuthors(), s)
 					|| is(publisherService.findOne(a.getPublisher().getId()).getPublisher(), s))
 				list.add(a);
 		}
 
 		for (Book a : listBookGet) {
-			if (error(String.valueOf(a.getId()), s) || error(a.getTitle(), s) || error(a.getDomain(), s)
+			if (error(String.valueOf(a.getBookId()), s) || error(a.getBookTitle(), s) || error(a.getDomain(), s)
 					|| error(a.getAuthors(), s)
 					|| error(publisherService.find(a.getPublisher().getId()).getPublisher(), s))
 				if (!list.contains(a))

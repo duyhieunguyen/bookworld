@@ -54,7 +54,7 @@ public interface BookService {
 	
 	List<UploadInformationDTO> searchBookInfo(String keyword);
 	
-	List<UploadInformationDTO> searchBookBySortBrand(String brand);
+	List<UploadInformationDTO> searchBookBySortAuthor(String brand);
 	
 	List<UploadInformationDTO> searchBookBySortPrice(String sort);
 
